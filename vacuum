@@ -1,0 +1,6 @@
+#!/bin/zsh
+pgrep firefox && exit 11
+pgrep aurora && exit 11
+cd ~/.mozilla/firefox
+print -l **/*.sqlite | xargs -I {} sqlite3 {} vacuum
+print -l **/*.sqlite | xargs -I {} sqlite3 {} reindex
