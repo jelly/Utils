@@ -52,6 +52,8 @@ class SpotifyNotifier(object):
     def handle_properties_changed(self, interface, changed_props, invalidated_props):
         """Handle track changes."""
         metadata = changed_props.get("Metadata", {})
+        playbackstatus = changed_props.get("PlaybackStatus", {})
+
         if metadata:
             if pynotify.init("Spotify Notifier Demo"):
 
@@ -72,6 +74,38 @@ class SpotifyNotifier(object):
                 alert.set_urgency(pynotify.URGENCY_NORMAL)
                 alert.set_timeout(pynotify.EXPIRES_DEFAULT)
                 alert.show()
+        elif playbackstatus != '{}':
+            if playbackstatus == 'Paused':
+                if pynotify.init("Spotify Notifier Demo"):
+                    alert = pynotify.Notification('Spotify',"Playback Paused")
+                    alert.set_urgency(pynotify.URGENCY_NORMAL)
+                    alert.set_timeout(pynotify.EXPIRES_DEFAULT)
+                    alert.show()
+            elif playbackstatus == 'Playing':
+                if pynotify.init("Spotify Notifier Demo"):
+                    bus = dbus.SessionBus()
+                    player = bus.get_object('com.spotify.qt', '/')
+                    iface = dbus.Interface(player, 'org.freedesktop.MediaPlayer2')
+                    info = iface.GetMetadata()
+                    # OUT: [dbus.String(u'xesam:album'), dbus.String(u'xesam:title'), dbus.String(u'xesam:trackNumber'), dbus.String(u'xesam:artist'), dbus.String(u'xesam:discNumber'), dbus.String(u'mpris:trackid'), dbus.String(u'mpris:length'), dbus.String(u'mpris:artUrl'), dbus.String(u'xesam:autoRating'), dbus.String(u'xesam:contentCreated'), dbus.String(u'xesam:url')]
+                    title = str(info['xesam:title'])
+                    url = str(info['mpris:artUrl'])
+                    url = url.replace('thumb','image')
+                    f = urllib.urlopen(url)
+                    data = f.read()
+                    pbl = gtk.gdk.PixbufLoader()
+                    pbl.write(data)
+                    pbuf = pbl.get_pixbuf()
+                    pbl.close()
+            
+                    alert = pynotify.Notification(title,"By %s from %s" % (info['xesam:artist'][0],info['xesam:album'][0] ))
+                    alert.set_icon_from_pixbuf(pbuf)
+                    alert.set_urgency(pynotify.URGENCY_NORMAL)
+                    alert.set_timeout(pynotify.EXPIRES_DEFAULT)
+                    alert.show()
+
+
+
 
 if __name__ == "__main__":
     SpotifyNotifier()
