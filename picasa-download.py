@@ -4,6 +4,9 @@ from lxml.html import parse, tostring, fromstring
 import urllib.request
 import sys
 
+# Downloads a webalbum of picasa in the current directory if the rss url is provided.
+# Note that https doesn't work atm
+
 
 if len(sys.argv) == 2:
     url = sys.argv[1]
