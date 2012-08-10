@@ -1,0 +1,43 @@
+#!/usr/bin/python2
+import tarfile
+import smtplib
+
+# Here are the email package modules we'll need
+from email.mime.application import MIMEApplication
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import datetime
+import email
+
+
+# Create the container (outer) email message.
+msg = MIMEMultipart()
+html = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
+html +='"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">'
+html +='<body style="font-size:12px;font-family:Verdana"><p>Backup /etc done:  %s </p>' % datetime.datetime.now().isoformat()
+html += "</body></html>"
+
+msg['Subject'] = 'Backup etc'
+msg['From'] = 'foo@bar.com' 
+msg['To'] = 'foo@bar.com'
+msg.attach(email.mime.text.MIMEText(html,'html'))
+
+txt = datetime.datetime.now().isoformat()
+tar = tarfile.open('/tmp/etc.tar.gz','w:gz')
+tar.add('/etc/', recursive=True)
+tar.close()
+
+part= email.mime.base.MIMEBase('application','x-gzip-compressed')
+part.set_payload((file('/tmp/etc.tar.gz').read()))
+email.encoders.encode_base64(part)
+part.add_header('Content-Disposition','attachment;filename=etc.tar.gz')
+msg.attach(part)
+
+
+s = smtplib.SMTP('smtp.google.com')
+s.sendmail('foo@bar.com','foo@bar.com', msg.as_string())
+s.quit()
+
+
+
