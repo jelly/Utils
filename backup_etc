@@ -19,7 +19,7 @@ html +='<body style="font-size:12px;font-family:Verdana"><p>Backup /etc done:  %
 html += "</body></html>"
 
 msg['Subject'] = 'Backup etc'
-msg['From'] = 'foo@bar.com' 
+msg['From'] = 'bar@foo.com' 
 msg['To'] = 'foo@bar.com'
 msg.attach(email.mime.text.MIMEText(html,'html'))
 
@@ -35,9 +35,6 @@ part.add_header('Content-Disposition','attachment;filename=etc.tar.gz')
 msg.attach(part)
 
 
-s = smtplib.SMTP('smtp.google.com')
-s.sendmail('foo@bar.com','foo@bar.com', msg.as_string())
+s = smtplib.SMTP('smtp.bar.com')
+s.sendmail('bar@foo.com','foo@bar.com', msg.as_string())
 s.quit()
-
-
-
