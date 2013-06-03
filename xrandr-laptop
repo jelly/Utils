@@ -1,0 +1,13 @@
+#!/bin/bash
+
+new=`cat /sys/devices/platform/hp-wmi/dock`
+if [[ $new == "0" ]]; then
+    xrandr --output VGA-0 --off \
+    --output DP-0 --off \
+    --output LVDS-0  --auto
+else
+    
+    xrandr --output VGA-0 --auto --primary \
+    --output DP-0 --auto --right-of VGA-0 \
+    --output LVDS-0 --off
+fi
