@@ -82,7 +82,7 @@ _ch_command(){
    elif (( CURRENT == 3)); then
         cmd="${${_ch_cmds[(r)$words[1]:*]%%:*}}"
 	if [[ $cmd == "install" ]]; then
-	   _files
+	   _files -g "*.pkg.tar*"
 	fi
    fi
 }
