@@ -1,48 +1,71 @@
 #compdef ch
 # copy this file to /usr/share/zsh/site-functions/_ch
 
-_ch_build(){	
-    local -a _options
-    _options=(
-        '64:64bit extra'
+_options=(
+	'64:64bit extra'
 	'64t:64bit testing'
 	'64ml:64bit multilib'
 	'64mlt:64bit multilib testing'
 	'64s:64bit staging'
-        '32:32bit extra'
+	'32:32bit extra'
 	'32t:32bit testing'
 	'32ml:32bit multilib'
 	'32mlt:32bit multilib testing'
 	'32s:32bit staging'
-    )
+)
+
+_ch_build(){	
     _describe options _options
 }
 
 _ch_install(){	
+    _describe options _options
+}
+
+_ch_shell(){
+    _describe options _options
+}
+
+_ch_rshell(){
+    _describe options _options
+}
+
+_ch_build-single(){
+    _describe options _options
+}
+
+_ch_kill(){
     local -a _options
     _options=(
-        '64:64bit extra'
+	'64:64bit extra'
 	'64t:64bit testing'
 	'64ml:64bit multilib'
 	'64mlt:64bit multilib testing'
 	'64s:64bit staging'
-        '32:32bit extra'
+	'32:32bit extra'
 	'32t:32bit testing'
 	'32ml:32bit multilib'
 	'32mlt:32bit multilib testing'
 	'32s:32bit staging'
+	'all:remove all chroots (including master chroot)'
     )
     _describe options _options
 }
+
+
 _ch_command(){
     local -a _ch_cmds
     _ch_cmds=(
 	'build:<id> builds the current package for multiple chroots'
-	'clean:remove all working copies'
-	'kill:remove all existing chroots'
- 	'update:update all chroots'
+	'build-single:<id> [<arguments] build the current package for one chroot and pass arguments to makechrootpkg builds the current package for a single chroot'
+	'clean:<id optional>remove all working copies'
 	'install:<id> <package files> install the packages files in the chroot '
+	'kill:<id> remove all existing chroots'
+ 	'update:<id> update all chroots'
 	'list:list all existing master chroots'
+	'shell:<id> spawn a shell/run command in a chroot'
+	'rshell:<id> spawn a shell/run command in the master chroot'
+	'repack:<id> repack makepkg -R'
     )
     if (( CURRENT == 1 )); then
         _describe -t commands 'ch command' _ch_cmds
